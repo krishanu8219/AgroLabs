@@ -1,8 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a modern Next.js application featuring:
+- 🤖 **AI Chat** with Perplexity Sonar Reasoning Pro
+- 🛡️ **Authentication** with Clerk
+- 📊 **Dashboard** with farming insights
+- 🎨 **Beautiful UI** with Tailwind CSS & shadcn/ui
+- ⚡ **Typewriter Effect** for engaging chat experience
+- 🧠 **AI Thinking Display** for transparency
+- 📝 **Markdown Formatting** for rich responses
+
+## Setup
+
+### Quick Start (5 minutes)
+1. **Install dependencies**: `npm install`
+2. **Set up chat storage**: Follow `QUICK_START.md` for simple Supabase setup
+3. **Add environment variables** to `.env.local`:
+   - Clerk keys (see `CLERK_SETUP.md`)
+   - Perplexity API key (see `PERPLEXITY_SETUP.md`)
+   - Supabase keys (see `QUICK_START.md`)
+4. **Run**: `npm run dev`
+
+### Full Setup (Optional)
+For complete database schema with fields, alerts, etc., see `SUPABASE_SETUP.md`
 
 ## Getting Started
 
-First, run the development server:
+Run the development server:
 
 ```bash
 npm run dev
