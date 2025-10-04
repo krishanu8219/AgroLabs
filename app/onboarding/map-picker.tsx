@@ -15,12 +15,12 @@ interface MapPickerProps {
 }
 
 export function MapPicker({ location, onLocationChange }: MapPickerProps) {
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [marker, setMarker] = useState<google.maps.Marker | null>(null);
+  const [map, setMap] = useState<any>(null);
+  const [marker, setMarker] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
-  const [autocompleteService, setAutocompleteService] = useState<google.maps.places.AutocompleteService | null>(null);
-  const [suggestions, setSuggestions] = useState<google.maps.places.AutocompletePrediction[]>([]);
+  const [autocompleteService, setAutocompleteService] = useState<any>(null);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
@@ -88,7 +88,7 @@ export function MapPicker({ location, onLocationChange }: MapPickerProps) {
     }
 
     // Add click listener to place marker
-    googleMap.addListener('click', (event: google.maps.MapMouseEvent) => {
+    googleMap.addListener('click', (event: any) => {
       if (event.latLng) {
         const newLocation = {
           lat: event.latLng.lat(),
@@ -129,7 +129,7 @@ export function MapPicker({ location, onLocationChange }: MapPickerProps) {
     if (!map || !query.trim()) return;
 
     const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ address: query }, (results, status) => {
+    geocoder.geocode({ address: query }, (results: any, status: any) => {
       if (status === 'OK' && results && results[0]) {
         const result = results[0];
         const newLocation = {
@@ -182,8 +182,8 @@ export function MapPicker({ location, onLocationChange }: MapPickerProps) {
     autocompleteService.getPlacePredictions({
       input: value,
       types: ['establishment', 'geocode'],
-    }, (predictions, status) => {
-      if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
+    }, (predictions: any, status: any) => {
+      if (status === 'OK' && predictions) {
         setSuggestions(predictions);
         setShowSuggestions(true);
       } else {
@@ -193,7 +193,7 @@ export function MapPicker({ location, onLocationChange }: MapPickerProps) {
     });
   };
 
-  const handleSuggestionClick = (suggestion: google.maps.places.AutocompletePrediction) => {
+  const handleSuggestionClick = (suggestion: any) => {
     setSearchQuery(suggestion.description);
     setShowSuggestions(false);
     handleSearch(suggestion.description);

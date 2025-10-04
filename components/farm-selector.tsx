@@ -23,7 +23,7 @@ export function FarmSelector() {
           setFarms(data);
           
           // Set first farm as default if none selected
-          if (data.length > 0 && !selectedFarmId) {
+          if (data.length > 0 && !selectedFarmId && data[0].id) {
             setSelectedFarmId(data[0].id);
             localStorage.setItem('selectedFarmId', data[0].id);
           }
@@ -93,8 +93,8 @@ export function FarmSelector() {
           </SelectValue>
         </SelectTrigger>
         <SelectContent className="shadow-xl border border-border/50 bg-background/95 backdrop-blur-xl">
-          {farms.map((farm) => (
-            <SelectItem key={farm.id} value={farm.id} className="hover:bg-green-50 dark:hover:bg-green-950/30 transition-colors">
+          {farms.filter(farm => farm.id).map((farm) => (
+            <SelectItem key={farm.id} value={farm.id!} className="hover:bg-green-50 dark:hover:bg-green-950/30 transition-colors">
               <div className="flex items-center gap-3 py-1">
                 <div className="relative">
                   <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"></div>
