@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { FarmSelector } from './farm-selector';
+import { ThemeToggle } from './theme-toggle';
 
 export function DashboardNav() {
   const pathname = usePathname();
@@ -12,7 +13,7 @@ export function DashboardNav() {
 
   return (
     <header className="sticky top-0 z-50 bg-background border-b">
-      <div className="flex h-14 items-center justify-between px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <div className="w-7 h-7 bg-green-600 rounded-md flex items-center justify-center">
@@ -81,6 +82,7 @@ export function DashboardNav() {
         </div>
         
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

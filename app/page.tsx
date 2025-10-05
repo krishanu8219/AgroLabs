@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Home() {
   return (
@@ -26,6 +27,7 @@ export default function Home() {
               </Link>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
+              <ThemeToggle />
               <SignedOut>
                 <SignInButton mode="modal">
                   <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
