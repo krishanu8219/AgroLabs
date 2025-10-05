@@ -135,6 +135,40 @@ export function FarmDetails({ farms }: FarmDetailsProps) {
         <WeatherMap farmLocation={selectedFarm.location} />
       </div>
 
+      {/* Quick Actions */}
+      <section className="mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Link href="/dashboard/chat" className="group border rounded-xl p-5 bg-card hover:bg-muted transition-colors">
+            <div className="flex items-center justify-between">
+              <div className="text-sm font-medium">AI Chat</div>
+              <span className="text-xs px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300">Go</span>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">Ask anything about your farm, weather, or tasks.</p>
+          </Link>
+          <Link href="/dashboard/crops" className="group border rounded-xl p-5 bg-card hover:bg-muted transition-colors">
+            <div className="flex items-center justify-between">
+              <div className="text-sm font-medium">Crops Advisor</div>
+              <span className="text-xs px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300">Go</span>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">See what crops are suitable right now.</p>
+          </Link>
+          <Link href="/dashboard/pesticides" className="group border rounded-xl p-5 bg-card hover:bg-muted transition-colors">
+            <div className="flex items-center justify-between">
+              <div className="text-sm font-medium">Pesticides Advisor</div>
+              <span className="text-xs px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300">Go</span>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">Get an IPM-aligned advisory based on weather.</p>
+          </Link>
+          <Link href="/dashboard/settings" className="group border rounded-xl p-5 bg-card hover:bg-muted transition-colors">
+            <div className="flex items-center justify-between">
+              <div className="text-sm font-medium">Settings</div>
+              <span className="text-xs px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300">Go</span>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">Manage profile and farms.</p>
+          </Link>
+        </div>
+      </section>
+
       {/* Weather Data */}
       <WeatherDisplay farmLocation={selectedFarm.location} />
 

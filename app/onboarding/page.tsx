@@ -141,7 +141,7 @@ export default function OnboardingPage() {
           {step === 1 && (
             <div className="space-y-6">
               <div className="text-center">
-                <h1 className="text-2xl font-semibold mb-2">Welcome to AgriAI!</h1>
+                <h1 className="text-2xl font-semibold mb-2">Welcome to AgroLabs!</h1>
                 <p className="text-muted-foreground">Let's set up your farmer profile</p>
               </div>
 

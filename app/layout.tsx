@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AgriAI - Smart Farming with AI & Satellite Data",
+  title: "AgroLabs - Smart Farming with AI & Satellite Data",
   description: "Make informed farming decisions with AI-powered chat and real-time satellite data insights",
 };
 
@@ -28,6 +28,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <head>
+          <link rel="icon" href="/agro-leaf.svg" sizes="any" />
           <script
             src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
             async

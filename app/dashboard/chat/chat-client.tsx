@@ -51,6 +51,8 @@ export function ChatInterface() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const typewriterTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const recognitionRef = useRef<any>(null);
+  const [isRecording, setIsRecording] = useState(false);
 
   // Fetch weather data and farm location
   useEffect(() => {
@@ -104,8 +106,9 @@ export function ChatInterface() {
       setIsLoadingHistory(true);
       try {
         const selectedFarmId = localStorage.getItem('selectedFarmId');
-        console.log('Loading chat history for farm:', selectedFarmId);
-        const history = await getChatHistory(user.id, selectedFarmId);
+        const farmId: string | undefined = selectedFarmId ?? undefined;
+        console.log('Loading chat history for farm:', farmId);
+        const history = await getChatHistory(user.id, farmId);
         console.log('Loaded history for farm:', history);
         
         if (history.length > 0) {
@@ -144,8 +147,9 @@ export function ChatInterface() {
         setIsLoadingHistory(true);
         try {
           const selectedFarmId = localStorage.getItem('selectedFarmId');
-          console.log('Farm changed, loading chat history for farm:', selectedFarmId);
-          const history = await getChatHistory(user.id, selectedFarmId);
+          const farmId: string | undefined = selectedFarmId ?? undefined;
+          console.log('Farm changed, loading chat history for farm:', farmId);
+          const history = await getChatHistory(user.id, farmId);
           console.log('Loaded history for new farm:', history);
           
           if (history.length > 0) {
@@ -280,7 +284,7 @@ export function ChatInterface() {
       const selectedFarmId = localStorage.getItem('selectedFarmId');
       await saveChatMessage({
         user_id: user.id,
-        farm_id: selectedFarmId,
+        farm_id: selectedFarmId ?? undefined,
         role: 'user',
         content: textToSend,
       });
@@ -361,7 +365,7 @@ Use this real-time weather data to provide specific, actionable recommendations 
         const selectedFarmId = localStorage.getItem('selectedFarmId');
         await saveChatMessage({
           user_id: user.id,
-          farm_id: selectedFarmId,
+          farm_id: selectedFarmId ?? undefined,
           role: 'assistant',
           content: actualResponse,
           thinking: thinking || undefined,
@@ -400,6 +404,71 @@ Use this real-time weather data to provide specific, actionable recommendations 
     sendMessage(question);
   };
 
+  // Voice input using Web Speech API (if available)
+  const startVoice = () => {
+    try {
+      const SpeechRecognition: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        console.warn('SpeechRecognition not supported');
+        return;
+      }
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = true;
+      recognition.continuous = true;
+
+      recognition.onresult = (event: any) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            const finalText = transcript.trim();
+            setInput(finalText);
+            // Auto-send when final result comes in
+            if (finalText) {
+              setTimeout(() => sendMessage(finalText), 100);
+            }
+            transcript = '';
+          }
+        }
+      };
+
+      recognition.onerror = (e: any) => {
+        console.error('Speech recognition error:', e);
+        stopVoice();
+      };
+
+      recognition.onend = () => {
+        setIsRecording(false);
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+      setIsRecording(true);
+    } catch (e) {
+      console.error('Failed to start voice input', e);
+      setIsRecording(false);
+    }
+  };
+
+  const stopVoice = () => {
+    try {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+        recognitionRef.current = null;
+      }
+    } catch (e) {
+      // ignore
+    } finally {
+      setIsRecording(false);
+    }
+  };
+
+  const toggleVoice = () => {
+    if (isRecording) stopVoice();
+    else startVoice();
+  };
+
   return (
     <div className="h-screen flex flex-col w-full">
       {/* Chat Messages */}
@@ -417,10 +486,8 @@ Use this real-time weather data to provide specific, actionable recommendations 
         ) : messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center max-w-2xl px-4">
-              <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
+              <div className="rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <img src="https://i.ibb.co/dx6XFZC/ali.png" alt="" className="w-16 h-16" />
               </div>
                       <h1 className="text-2xl font-semibold mb-3">What can I help you with?</h1>
                       <p className="text-muted-foreground mb-8">
@@ -448,7 +515,7 @@ Use this real-time weather data to provide specific, actionable recommendations 
         ) : (
           <>
             {messages.map((message, index) => (
-              <div key={index} className="group">
+              <div key={index} className="group mt-8">
                 <div className="flex items-start gap-4">
                   <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${
                     message.role === 'user' 
@@ -474,7 +541,7 @@ Use this real-time weather data to provide specific, actionable recommendations 
                     ) : (
                       <div>
                         <div className="text-sm font-medium mb-2 text-muted-foreground flex items-center gap-2">
-                          AgriAI
+                          AgroLabs
                           {message.thinking && (
                             <button
                               onClick={() => toggleThinking(index)}
@@ -594,7 +661,7 @@ Use this real-time weather data to provide specific, actionable recommendations 
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <div className="text-sm font-medium mb-2 text-muted-foreground">AgriAI</div>
+                  <div className="text-sm font-medium mb-2 text-muted-foreground">AgroLabs</div>
                   <div className="flex gap-1">
                     <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                     <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
@@ -620,8 +687,21 @@ Use this real-time weather data to provide specific, actionable recommendations 
                 onKeyPress={handleKeyPress}
                 placeholder={isLoadingHistory ? "Loading history..." : "Ask anything..."}
                 disabled={isLoading || isLoadingHistory}
-                className="w-full px-3 sm:px-4 py-3 pr-10 sm:pr-12 bg-muted border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-600 text-sm disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+                className="w-full pl-10 pr-20 sm:pl-11 sm:pr-24 py-3 bg-muted border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-600 text-sm disabled:opacity-50 disabled:cursor-not-allowed resize-none"
               />
+            {/* Mic button */}
+            <button
+              onClick={toggleVoice}
+              disabled={isLoading || isLoadingHistory}
+              title={isRecording ? 'Stop voice' : 'Speak'}
+              className={`absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isRecording ? 'bg-red-600 text-white' : 'bg-green-600 text-white hover:bg-green-700'} disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              {isRecording ? (
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="6" width="12" height="12"/></svg>
+              ) : (
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              )}
+            </button>
             <button
               onClick={() => sendMessage()}
               disabled={!input.trim() || isLoading || isLoadingHistory}

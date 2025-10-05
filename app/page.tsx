@@ -11,20 +11,13 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center">
-              <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                AgriAI
+              <span className="flex items-center">
+                <img src="/logo.png" className="h-10 dark:hidden" alt="AgroLabs" />
+                <img src="/logow.png" className="h-10 hidden dark:block" alt="AgroLabs" />
               </span>
             </div>
             <div className="hidden md:flex items-center gap-6">
-              <Link href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Features
-              </Link>
-              <Link href="#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                How It Works
-              </Link>
-              <Link href="#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Pricing
-              </Link>
+            
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
               <ThemeToggle />
@@ -76,7 +69,7 @@ export default function Home() {
           </h1>
           
           <p className="text-lg sm:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-            Harness the power of artificial intelligence and real-time satellite imagery to optimize your crops, 
+            Harness the power of artificial intelligence and real-time satellite data to optimize your crops, 
             predict issues, and maximize yields. Your AI farming assistant is here.
           </p>
           
@@ -84,7 +77,7 @@ export default function Home() {
             <SignedOut>
               <SignUpButton mode="modal">
                 <Button size="lg" className="bg-green-600 hover:bg-green-700 text-lg px-6 sm:px-8 h-11 sm:h-12 w-full sm:w-auto">
-                  Start Free Trial
+                  Get Started
                 </Button>
               </SignUpButton>
             </SignedOut>
@@ -100,26 +93,7 @@ export default function Home() {
             </Button>
           </div>
 
-          <div className="mt-12 flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              No credit card required
-            </div>
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              14-day free trial
-            </div>
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              Cancel anytime
-            </div>
-          </div>
+        
         </div>
       </section>
 
@@ -154,7 +128,7 @@ export default function Home() {
                   <svg className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Real-time satellite imagery analysis
+                  Real-time satellite data analysis
                 </li>
                 <li className="flex items-start gap-2">
                   <svg className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -235,7 +209,7 @@ export default function Home() {
                 </Button>
               </Link>
             </SignedIn>
-            <Button size="lg" variant="outline" className="text-lg px-8 h-12 border-white text-white hover:bg-white/10">
+            <Button size="lg" variant="outline" className="text-lg px-8 h-12 border-white/10 text-white bg-white/10 hover:bg-white/20 hover:text-white">
               Contact Sales
             </Button>
           </div>
@@ -248,39 +222,25 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="col-span-2 md:col-span-1">
               <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                AgriAI
+                AgroLabs
               </span>
               <p className="mt-4 text-sm text-muted-foreground">
                 Smart farming powered by AI and satellite data
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Product</h3>
-              <ul className="space-y-3 text-sm text-muted-foreground">
-                <li><Link href="#" className="hover:text-foreground transition-colors">Features</Link></li>
-                <li><Link href="#" className="hover:text-foreground transition-colors">Pricing</Link></li>
-                <li><Link href="#" className="hover:text-foreground transition-colors">Case Studies</Link></li>
-              </ul>
+              
+             
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Company</h3>
-              <ul className="space-y-3 text-sm text-muted-foreground">
-                <li><Link href="#" className="hover:text-foreground transition-colors">About</Link></li>
-                <li><Link href="#" className="hover:text-foreground transition-colors">Blog</Link></li>
-                <li><Link href="#" className="hover:text-foreground transition-colors">Careers</Link></li>
-              </ul>
+            
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Support</h3>
-              <ul className="space-y-3 text-sm text-muted-foreground">
-                <li><Link href="#" className="hover:text-foreground transition-colors">Help Center</Link></li>
-                <li><Link href="#" className="hover:text-foreground transition-colors">Contact</Link></li>
-                <li><Link href="#" className="hover:text-foreground transition-colors">Status</Link></li>
-              </ul>
+            
             </div>
           </div>
           <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-            <p>&copy; 2025 AgriAI. All rights reserved.</p>
+            <p>&copy; 2025 AgroLabs. All rights reserved.</p>
           </div>
         </div>
       </footer>

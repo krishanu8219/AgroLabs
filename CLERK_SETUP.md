@@ -2,7 +2,7 @@
 
 ## 🔐 Setting Up Clerk Authentication
 
-Follow these steps to complete the Clerk authentication setup for your AgriAI app:
+Follow these steps to complete the Clerk authentication setup for your AgroLabs app:
 
 ### 1. Create a Clerk Account
 

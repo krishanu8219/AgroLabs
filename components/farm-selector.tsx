@@ -90,8 +90,8 @@ export function FarmSelector() {
           </SelectValue>
         </SelectTrigger>
         <SelectContent>
-          {farms.map((farm) => (
-            <SelectItem key={farm.id} value={farm.id}>
+          {farms.filter((f) => !!f.id).map((farm) => (
+            <SelectItem key={farm.id as string} value={(farm.id as string)}>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-600 rounded-full"></div>
                 <span>{farm.name}</span>

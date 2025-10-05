@@ -1,6 +1,6 @@
 # Typewriter Effect & AI Thinking Display
 
-Your AgriAI chat now features:
+Your AgroLabs chat now features:
 1. **Typewriter Effect**: Responses appear word-by-word for a natural chat experience
 2. **AI Thinking Display**: See the reasoning process behind each response
 

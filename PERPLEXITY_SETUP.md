@@ -2,7 +2,7 @@
 
 ## 🤖 Setting Up Perplexity AI Integration
 
-Your AgriAI app now has a fully functional AI chat powered by Perplexity AI! Follow these steps to complete the setup.
+Your AgroLabs app now has a fully functional AI chat powered by Perplexity AI! Follow these steps to complete the setup.
 
 ### 1. Get Your Perplexity API Key
 

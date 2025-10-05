@@ -1,6 +1,6 @@
 # Markdown Formatting in AI Chat
 
-Your AgriAI chat now supports rich markdown formatting with typewriter effects and AI thinking display! The AI responses will be beautifully formatted with headings, lists, tables, code blocks, and more. Plus, responses appear word-by-word with a collapsible thinking process section.
+Your AgroLabs chat now supports rich markdown formatting with typewriter effects and AI thinking display! The AI responses will be beautifully formatted with headings, lists, tables, code blocks, and more. Plus, responses appear word-by-word with a collapsible thinking process section.
 
 ## 📦 Installation
 
@@ -98,7 +98,7 @@ These prompts will showcase the markdown formatting:
 
 ## 🎨 Styling
 
-The markdown is styled to match your AgriAI theme:
+The markdown is styled to match your AgroLabs theme:
 - Green accent colors for links
 - Proper spacing and padding
 - Responsive tables

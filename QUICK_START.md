@@ -9,7 +9,7 @@ Get your chat messages saved to Supabase in 5 minutes! 🚀
 1. Go to [https://supabase.com](https://supabase.com)
 2. Click **"New Project"**
 3. Fill in:
-   - **Name**: AgriAI
+   - **Name**: AgroLabs
    - **Database Password**: (save this!)
    - **Region**: Choose closest to you
 4. Click **"Create new project"**

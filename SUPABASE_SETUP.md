@@ -1,6 +1,6 @@
 # Supabase Database Setup
 
-Complete guide to setting up Supabase as your database for AgriAI.
+Complete guide to setting up Supabase as your database for AgroLabs.
 
 ## 📦 Installation
 
@@ -424,5 +424,5 @@ Make sure you're passing the Clerk user ID correctly and that your JWT token is 
 - [Supabase Dashboard](https://app.supabase.com)
 - [Row Level Security](https://supabase.com/docs/guides/auth/row-level-security)
 
-Your AgriAI app is now ready to store and retrieve data from Supabase! 🌾✨
+Your AgroLabs app is now ready to store and retrieve data from Supabase! 🌾✨
 
