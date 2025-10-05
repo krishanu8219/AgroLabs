@@ -18,13 +18,26 @@ interface Message {
 }
 
 const SUGGESTED_QUESTIONS = [
-  "What's the current health status of my corn field?",
-  "Should I irrigate based on today's satellite imagery?",
-  "Are there any pest or disease risks detected?",
-  "What's the weather forecast for the next week?",
-  "When is the best time to fertilize my crops?",
-  "How can I improve my crop yield this season?"
+  "Should I irrigate my crops based on current weather conditions?",
+  "What does the current soil moisture deficit mean for my farming?",
+  "How does today's temperature and precipitation affect my crops?",
+  "Is the current air quality safe for outdoor farming activities?",
+  "What should I do about the current fire risk level?",
+  "How does the evapotranspiration rate affect my irrigation schedule?"
 ];
+
+interface WeatherData {
+  temperature?: number;
+  precipitation?: number;
+  windSpeed?: number;
+  pressure?: number;
+  airQuality?: number;
+  pm25?: number;
+  fireWarning?: number;
+  soilMoistureDeficit?: number;
+  evapotranspiration?: number;
+  leafWetness?: number;
+}
 
 export function ChatInterface() {
   const { user } = useUser();
@@ -33,23 +46,67 @@ export function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [expandedThinking, setExpandedThinking] = useState<Set<number>>(new Set());
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [farmLocation, setFarmLocation] = useState<{lat: number, lng: number} | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const typewriterTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Load chat history on mount
+  // Fetch weather data and farm location
+  useEffect(() => {
+    const fetchFarmData = async () => {
+      if (!user?.id) return;
+
+      try {
+        // Get user's farms
+        const farmsResponse = await fetch(`/api/settings/farms?userId=${user.id}`);
+        if (farmsResponse.ok) {
+          const farms = await farmsResponse.json();
+          console.log('🚜 Farms API Response:', farms);
+          if (farms.length > 0) {
+            // Use the selected farm or first farm
+            const selectedFarmId = localStorage.getItem('selectedFarmId');
+            const selectedFarm = selectedFarmId 
+              ? farms.find((f: any) => f.id === selectedFarmId) || farms[0]
+              : farms[0];
+            
+            console.log('🚜 Selected Farm:', selectedFarm);
+            setFarmLocation(selectedFarm.location);
+            
+            // Fetch weather data for the farm
+            const weatherResponse = await fetch(`/api/weather?lat=${selectedFarm.location.lat}&lon=${selectedFarm.location.lng}`);
+            if (weatherResponse.ok) {
+              const weather = await weatherResponse.json();
+              console.log('🌤️ Weather API Response:', weather);
+              console.log('🌤️ Weather Data:', weather.data);
+              setWeatherData(weather.data);
+            } else {
+              console.log('❌ Weather API Error:', weatherResponse.status, weatherResponse.statusText);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching farm data:', error);
+      }
+    };
+
+    fetchFarmData();
+  }, [user?.id]);
+
+  // Load chat history when farm changes
   useEffect(() => {
     const loadChatHistory = async () => {
-      if (!user?.id) {
+      if (!user?.id || !farmLocation) {
         setIsLoadingHistory(false);
         return;
       }
       
       setIsLoadingHistory(true);
       try {
-        console.log('Loading chat history for user:', user.id);
-        const history = await getChatHistory(user.id);
-        console.log('Loaded history:', history);
+        const selectedFarmId = localStorage.getItem('selectedFarmId');
+        console.log('Loading chat history for farm:', selectedFarmId);
+        const history = await getChatHistory(user.id, selectedFarmId);
+        console.log('Loaded history for farm:', history);
         
         if (history.length > 0) {
           const formattedMessages = history.map(msg => ({
@@ -59,19 +116,68 @@ export function ChatInterface() {
             timestamp: new Date(msg.created_at),
           }));
           setMessages(formattedMessages);
-          console.log('Set formatted messages:', formattedMessages);
+          console.log('Set formatted messages for farm:', formattedMessages);
           
           // Scroll to bottom after loading history
           setTimeout(scrollToBottom, 100);
+        } else {
+          setMessages([]);
         }
       } catch (error) {
         console.error('Error loading chat history:', error);
+        setMessages([]);
       } finally {
         setIsLoadingHistory(false);
       }
     };
 
     loadChatHistory();
+  }, [user?.id, farmLocation]);
+
+  // Listen for farm changes to reload chat history
+  useEffect(() => {
+    const handleFarmChange = () => {
+      // Reload chat history when farm changes
+      const loadChatHistory = async () => {
+        if (!user?.id) return;
+        
+        setIsLoadingHistory(true);
+        try {
+          const selectedFarmId = localStorage.getItem('selectedFarmId');
+          console.log('Farm changed, loading chat history for farm:', selectedFarmId);
+          const history = await getChatHistory(user.id, selectedFarmId);
+          console.log('Loaded history for new farm:', history);
+          
+          if (history.length > 0) {
+            const formattedMessages = history.map(msg => ({
+              role: msg.role as 'user' | 'assistant',
+              content: msg.content,
+              thinking: msg.thinking,
+              timestamp: new Date(msg.created_at),
+            }));
+            setMessages(formattedMessages);
+            console.log('Set formatted messages for new farm:', formattedMessages);
+            
+            // Scroll to bottom after loading history
+            setTimeout(scrollToBottom, 100);
+          } else {
+            setMessages([]);
+          }
+        } catch (error) {
+          console.error('Error loading chat history for new farm:', error);
+          setMessages([]);
+        } finally {
+          setIsLoadingHistory(false);
+        }
+      };
+
+      loadChatHistory();
+    };
+
+    window.addEventListener('farmChanged', handleFarmChange);
+    return () => {
+      window.removeEventListener('farmChanged', handleFarmChange);
+    };
   }, [user?.id]);
 
   const scrollToBottom = () => {
@@ -171,8 +277,10 @@ export function ChatInterface() {
 
     // Save user message to database
     try {
+      const selectedFarmId = localStorage.getItem('selectedFarmId');
       await saveChatMessage({
         user_id: user.id,
+        farm_id: selectedFarmId,
         role: 'user',
         content: textToSend,
       });
@@ -185,16 +293,44 @@ export function ChatInterface() {
     setIsLoading(true);
 
     try {
+      // Always prepare context with weather data (or indicate if unavailable)
+      const contextMessage = {
+        role: 'system',
+        content: weatherData && farmLocation ? `Current farm weather conditions:
+- Temperature: ${weatherData.temperature?.toFixed(1)}°C
+- Precipitation: ${weatherData.precipitation?.toFixed(1)}mm (1h)
+- Wind Speed: ${weatherData.windSpeed?.toFixed(1)}m/s
+- Atmospheric Pressure: ${weatherData.pressure?.toFixed(0)} hPa
+- Air Quality: ${weatherData.airQuality ? (weatherData.airQuality <= 1 ? 'Good' : weatherData.airQuality <= 2 ? 'Moderate' : weatherData.airQuality <= 3 ? 'Unhealthy for Sensitive' : weatherData.airQuality <= 4 ? 'Unhealthy' : weatherData.airQuality <= 5 ? 'Very Unhealthy' : 'Hazardous') : 'Unknown'}
+- PM2.5: ${weatherData.pm25?.toFixed(1)} μg/m³
+- Fire Risk: ${weatherData.fireWarning ? (weatherData.fireWarning <= 0.2 ? 'Low Risk' : weatherData.fireWarning <= 0.5 ? 'Moderate Risk' : weatherData.fireWarning <= 0.8 ? 'High Risk' : 'Extreme Risk') : 'Unknown'}
+- Soil Moisture Deficit: ${weatherData.soilMoistureDeficit?.toFixed(1)} mm
+- Evapotranspiration: ${weatherData.evapotranspiration?.toFixed(2)} mm/h
+- Leaf Wetness: ${weatherData.leafWetness === 0 ? 'Dry' : 'Wet'}
+- Farm Location: ${farmLocation.lat.toFixed(4)}, ${farmLocation.lng.toFixed(4)}
+
+Use this real-time weather data to provide specific, actionable recommendations for the farmer's current conditions.` : `Weather data is currently unavailable for this farm. Please provide general agricultural advice based on best practices and ask the farmer for specific weather conditions if needed for recommendations.`
+      };
+
+      console.log('🤖 Context Message for AI:', contextMessage);
+      console.log('🌤️ Current Weather Data:', weatherData);
+      console.log('📍 Farm Location:', farmLocation);
+
+      // Only send weather context and current user question (no conversation history)
+      const messagesToSend = [contextMessage, userMessage].map(msg => ({
+        role: msg.role,
+        content: msg.content,
+      }));
+
+      console.log('📤 Messages being sent to AI:', messagesToSend);
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: [...messages, userMessage].map(msg => ({
-            role: msg.role,
-            content: msg.content,
-          })),
+          messages: messagesToSend,
         }),
       });
 
@@ -222,8 +358,10 @@ export function ChatInterface() {
 
       // Save AI response to database
       try {
+        const selectedFarmId = localStorage.getItem('selectedFarmId');
         await saveChatMessage({
           user_id: user.id,
+          farm_id: selectedFarmId,
           role: 'assistant',
           content: actualResponse,
           thinking: thinking || undefined,
@@ -263,9 +401,9 @@ export function ChatInterface() {
   };
 
   return (
-    <div className="h-full flex flex-col w-full">
+    <div className="h-screen flex flex-col w-full">
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto px-6 py-8 space-y-8 max-w-3xl mx-auto w-full">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-8 space-y-6 sm:space-y-8 max-w-3xl mx-auto w-full">
         {isLoadingHistory ? (
           <div className="flex items-center justify-center h-full">
             <div className="flex items-center gap-3 text-muted-foreground">
@@ -284,10 +422,10 @@ export function ChatInterface() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
               </div>
-              <h1 className="text-2xl font-semibold mb-3">What can I help you with?</h1>
-              <p className="text-muted-foreground mb-8">
-                Ask me anything about farming, crops, satellite data, weather, or agricultural best practices.
-              </p>
+                      <h1 className="text-2xl font-semibold mb-3">What can I help you with?</h1>
+                      <p className="text-muted-foreground mb-8">
+                        Ask me anything about farming, crops, or agricultural best practices for your selected farm. I have access to your current weather data and can provide specific recommendations based on your farm's conditions.
+                      </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {SUGGESTED_QUESTIONS.slice(0, 4).map((question, index) => (
                   <button
@@ -470,8 +608,8 @@ export function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Chat Input */}
-      <div className="p-4 bg-background">
+      {/* Chat Input - Fixed at bottom */}
+      <div className="sticky bottom-0 p-3 sm:p-4 bg-background border-t border-border">
         <div className="flex items-end gap-3 max-w-3xl mx-auto w-full">
           <div className="flex-1 relative">
               <input
@@ -482,7 +620,7 @@ export function ChatInterface() {
                 onKeyPress={handleKeyPress}
                 placeholder={isLoadingHistory ? "Loading history..." : "Ask anything..."}
                 disabled={isLoading || isLoadingHistory}
-                className="w-full px-4 py-3 pr-12 bg-muted border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-600 text-sm disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+                className="w-full px-3 sm:px-4 py-3 pr-10 sm:pr-12 bg-muted border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-600 text-sm disabled:opacity-50 disabled:cursor-not-allowed resize-none"
               />
             <button
               onClick={() => sendMessage()}

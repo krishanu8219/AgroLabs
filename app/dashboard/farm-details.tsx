@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { WeatherDisplay } from '@/components/weather-display';
+import { WeatherMap } from '@/components/weather-map';
 import type { Farm } from '@/lib/types';
 
 interface FarmDetailsProps {
@@ -76,119 +78,65 @@ export function FarmDetails({ farms }: FarmDetailsProps) {
         </p>
       </div>
 
-      {/* Farm Overview */}
-      <div className="bg-card border rounded-xl p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-xl font-semibold mb-1">{selectedFarm.name}</h2>
-            <p className="text-sm text-muted-foreground">Farm Overview</p>
+      {/* Farm Overview and Map */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        {/* Farm Overview */}
+        <div className="bg-card border rounded-xl p-4 sm:p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-semibold mb-1">{selectedFarm.name}</h2>
+              <p className="text-sm text-muted-foreground">Farm Overview</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-600 rounded-full"></div>
+              <span className="text-sm text-muted-foreground">Active</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-600 rounded-full"></div>
-            <span className="text-sm text-muted-foreground">Active</span>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            <div className="space-y-2">
+              <div className="text-sm text-muted-foreground">Location</div>
+              <div className="text-sm font-medium">
+                {selectedFarm.location.lat.toFixed(4)}, {selectedFarm.location.lng.toFixed(4)}
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="text-sm text-muted-foreground">Size</div>
+              <div className="text-sm font-medium">
+                {selectedFarm.size_acres ? `${selectedFarm.size_acres} acres` : 'Not specified'}
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="text-sm text-muted-foreground">Crop Type</div>
+              <div className="text-sm font-medium capitalize">
+                {selectedFarm.crop_type || 'Not specified'}
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="text-sm text-muted-foreground">Irrigation</div>
+              <div className="text-sm font-medium capitalize">
+                {selectedFarm.irrigation_type || 'Not specified'}
+              </div>
+            </div>
           </div>
+
+          {selectedFarm.irrigation_details && (
+            <div className="mt-6 pt-6 border-t">
+              <div className="text-sm text-muted-foreground mb-2">Irrigation Details</div>
+              <div className="text-sm">{selectedFarm.irrigation_details}</div>
+            </div>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="space-y-2">
-            <div className="text-sm text-muted-foreground">Location</div>
-            <div className="text-sm font-medium">
-              {selectedFarm.location.lat.toFixed(4)}, {selectedFarm.location.lng.toFixed(4)}
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="text-sm text-muted-foreground">Size</div>
-            <div className="text-sm font-medium">
-              {selectedFarm.size_acres ? `${selectedFarm.size_acres} acres` : 'Not specified'}
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="text-sm text-muted-foreground">Crop Type</div>
-            <div className="text-sm font-medium capitalize">
-              {selectedFarm.crop_type || 'Not specified'}
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="text-sm text-muted-foreground">Irrigation</div>
-            <div className="text-sm font-medium capitalize">
-              {selectedFarm.irrigation_type || 'Not specified'}
-            </div>
-          </div>
-        </div>
-
-        {selectedFarm.irrigation_details && (
-          <div className="mt-6 pt-6 border-t">
-            <div className="text-sm text-muted-foreground mb-2">Irrigation Details</div>
-            <div className="text-sm">{selectedFarm.irrigation_details}</div>
-          </div>
-        )}
+        {/* Weather Map */}
+        <WeatherMap farmLocation={selectedFarm.location} />
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-card border rounded-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 bg-green-100 dark:bg-green-950 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <span className="text-xs font-medium text-green-600 bg-green-50 dark:bg-green-950/30 px-2 py-1 rounded-full">
-              Healthy
-            </span>
-          </div>
-          <h3 className="text-2xl font-bold mb-1">94%</h3>
-          <p className="text-sm text-muted-foreground">Crop Health Index</p>
-        </div>
-
-        <div className="bg-card border rounded-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-950 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-              </svg>
-            </div>
-            <span className="text-xs font-medium text-blue-600 bg-blue-50 dark:bg-blue-950/30 px-2 py-1 rounded-full">
-              Fair
-            </span>
-          </div>
-          <h3 className="text-2xl font-bold mb-1">72°F</h3>
-          <p className="text-sm text-muted-foreground">Current Weather</p>
-        </div>
-
-        <div className="bg-card border rounded-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 bg-amber-100 dark:bg-amber-950 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            </div>
-            <span className="text-xs font-medium text-amber-600 bg-amber-50 dark:bg-amber-950/30 px-2 py-1 rounded-full">
-              Monitor
-            </span>
-          </div>
-          <h3 className="text-2xl font-bold mb-1">2</h3>
-          <p className="text-sm text-muted-foreground">Active Alerts</p>
-        </div>
-
-        <div className="bg-card border rounded-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-950 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-            </div>
-            <span className="text-xs font-medium text-purple-600 bg-purple-50 dark:bg-purple-950/30 px-2 py-1 rounded-full">
-              +8%
-            </span>
-          </div>
-          <h3 className="text-2xl font-bold mb-1">$43.2K</h3>
-          <p className="text-sm text-muted-foreground">Est. Yield Value</p>
-        </div>
-      </div>
+      {/* Weather Data */}
+      <WeatherDisplay farmLocation={selectedFarm.location} />
 
       {/* AI Chat Quick Access */}
       <div className="bg-card border rounded-xl p-6">

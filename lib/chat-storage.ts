@@ -4,6 +4,7 @@ import { supabase } from './supabase'
 export interface ChatMessage {
   id?: string
   user_id: string
+  farm_id?: string
   role: 'user' | 'assistant'
   content: string
   thinking?: string
@@ -18,6 +19,7 @@ export async function saveChatMessage(message: ChatMessage) {
     .from('chat_messages')
     .insert({
       user_id: message.user_id,
+      farm_id: message.farm_id || null,
       role: message.role,
       content: message.content,
       thinking: message.thinking || null
@@ -34,15 +36,25 @@ export async function saveChatMessage(message: ChatMessage) {
 }
 
 /**
- * Get chat history for a user
+ * Get chat history for a user and farm
  */
-export async function getChatHistory(userId: string, limit: number = 50) {
-  const { data, error } = await supabase
+export async function getChatHistory(userId: string, farmId?: string, limit: number = 50) {
+  let query = supabase
     .from('chat_messages')
     .select('*')
     .eq('user_id', userId)
     .order('created_at', { ascending: true })
     .limit(limit)
+
+  // If farmId is provided, filter by farm_id
+  if (farmId) {
+    query = query.eq('farm_id', farmId)
+  } else {
+    // If no farmId, get messages with null farm_id (general chat)
+    query = query.is('farm_id', null)
+  }
+
+  const { data, error } = await query
 
   if (error) {
     console.error('Error fetching chat history:', error)

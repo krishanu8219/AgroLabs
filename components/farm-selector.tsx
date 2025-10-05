@@ -23,7 +23,7 @@ export function FarmSelector() {
           setFarms(data);
           
           // Set first farm as default if none selected
-          if (data.length > 0 && !selectedFarmId && data[0].id) {
+          if (data.length > 0 && !selectedFarmId) {
             setSelectedFarmId(data[0].id);
             localStorage.setItem('selectedFarmId', data[0].id);
           }
@@ -75,32 +75,26 @@ export function FarmSelector() {
   }
 
   return (
-    <div className="px-2">
+    <div className="px-2 sm:px-3 py-1.5">
       <Select value={selectedFarmId} onValueChange={handleFarmChange}>
-        <SelectTrigger className="w-52 h-9 text-sm bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-green-200 dark:border-green-800 hover:border-green-300 dark:hover:border-green-700 transition-all duration-200 shadow-sm hover:shadow-md">
+        <SelectTrigger className="w-32 sm:w-48 h-8 text-xs sm:text-sm">
           <SelectValue placeholder="Select farm">
             {selectedFarm ? (
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full animate-pulse"></div>
-                  <div className="absolute inset-0 w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full animate-ping opacity-75"></div>
-                </div>
-                <span className="truncate font-medium text-green-700 dark:text-green-300">{selectedFarm.name}</span>
+              <div className="flex items-center gap-1 sm:gap-2">
+                <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                <span className="truncate text-xs sm:text-sm">{selectedFarm.name}</span>
               </div>
             ) : (
-              <span className="text-muted-foreground">Select farm</span>
+              'Select farm'
             )}
           </SelectValue>
         </SelectTrigger>
-        <SelectContent className="shadow-xl border border-border/50 bg-background/95 backdrop-blur-xl">
-          {farms.filter(farm => farm.id).map((farm) => (
-            <SelectItem key={farm.id} value={farm.id!} className="hover:bg-green-50 dark:hover:bg-green-950/30 transition-colors">
-              <div className="flex items-center gap-3 py-1">
-                <div className="relative">
-                  <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"></div>
-                  <div className="absolute inset-0 w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full animate-ping opacity-50"></div>
-                </div>
-                <span className="font-medium">{farm.name}</span>
+        <SelectContent>
+          {farms.map((farm) => (
+            <SelectItem key={farm.id} value={farm.id}>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                <span>{farm.name}</span>
               </div>
             </SelectItem>
           ))}

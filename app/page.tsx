@@ -25,15 +25,15 @@ export default function Home() {
                 Pricing
               </Link>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <SignedOut>
                 <SignInButton mode="modal">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                     Sign In
                   </Button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                  <Button size="sm" className="bg-green-600 hover:bg-green-700 text-xs sm:text-sm px-3 sm:px-4">
                     Get Started
                   </Button>
                 </SignUpButton>
@@ -66,7 +66,7 @@ export default function Home() {
             AI-Powered Farming Intelligence
           </div>
           
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight mb-6">
             Make Smarter Farm Decisions with{" "}
             <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
               AI & Satellite Data
@@ -81,19 +81,19 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <SignedOut>
               <SignUpButton mode="modal">
-                <Button size="lg" className="bg-green-600 hover:bg-green-700 text-lg px-8 h-12">
+                <Button size="lg" className="bg-green-600 hover:bg-green-700 text-lg px-6 sm:px-8 h-11 sm:h-12 w-full sm:w-auto">
                   Start Free Trial
                 </Button>
               </SignUpButton>
             </SignedOut>
             <SignedIn>
               <Link href="/dashboard">
-                <Button size="lg" className="bg-green-600 hover:bg-green-700 text-lg px-8 h-12">
+                <Button size="lg" className="bg-green-600 hover:bg-green-700 text-lg px-6 sm:px-8 h-11 sm:h-12 w-full sm:w-auto">
                   Go to Dashboard
                 </Button>
               </Link>
             </SignedIn>
-            <Button size="lg" variant="outline" className="text-lg px-8 h-12">
+            <Button size="lg" variant="outline" className="text-lg px-6 sm:px-8 h-11 sm:h-12 w-full sm:w-auto">
               Watch Demo
             </Button>
           </div>
@@ -132,9 +132,9 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
           {/* AI Chat Feature */}
-          <div className="group relative bg-card border rounded-xl p-8 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+          <div className="group relative bg-card border rounded-xl p-6 sm:p-8 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
             <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="relative">
               <div className="w-12 h-12 bg-green-100 dark:bg-green-950 rounded-lg flex items-center justify-center mb-4">
@@ -171,7 +171,7 @@ export default function Home() {
           </div>
 
           {/* Dashboard Feature */}
-          <div className="group relative bg-card border rounded-xl p-8 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+          <div className="group relative bg-card border rounded-xl p-6 sm:p-8 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-green-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="relative">
               <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-950 rounded-lg flex items-center justify-center mb-4">
