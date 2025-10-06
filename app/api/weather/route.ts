@@ -20,7 +20,15 @@ export async function GET(request: Request) {
     const username = process.env.METEOMATICS_USERNAME || 'gupta_achintya';
     const password = process.env.METEOMATICS_PASSWORD || 's21pmVNR8FgU41C8sV0V';
     
+    console.log('Meteomatics credentials check:', {
+      hasUsername: !!username,
+      hasPassword: !!password,
+      usernameLength: username?.length,
+      isProduction: process.env.NODE_ENV === 'production'
+    });
+    
     if (!username || !password) {
+      console.error('Missing Meteomatics credentials');
       return NextResponse.json(
         { error: 'Meteomatics credentials not configured' },
         { status: 500 }
@@ -56,11 +64,28 @@ export async function GET(request: Request) {
       }
     });
 
+    console.log('Meteomatics API Response Status:', response.status);
+
     if (!response.ok) {
-      throw new Error(`Weather API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Meteomatics API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText,
+        url: url.replace(/:[^@]+@/, ':****@') // Hide password in logs
+      });
+      
+      return NextResponse.json(
+        { 
+          error: 'Failed to fetch weather data', 
+          details: response.status === 401 ? 'Invalid credentials' : response.statusText 
+        },
+        { status: response.status }
+      );
     }
 
     const data = await response.json();
+    console.log('Meteomatics API success, data received');
 
     // Transform the data into a more usable format
     const weatherData = {
