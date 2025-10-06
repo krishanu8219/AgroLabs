@@ -200,16 +200,6 @@ export function FarmsList({ initialFarms }: FarmsListProps) {
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="irrigation_details">Irrigation Details</Label>
-          <Input
-            id="irrigation_details"
-            value={formData.irrigation_details || ''}
-            onChange={(e) => handleFormChange('irrigation_details', e.target.value)}
-            placeholder="Optional details about your irrigation system"
-          />
-        </div>
-
         <div className="flex gap-3">
           <Button
             type="submit"
@@ -289,7 +279,6 @@ export function FarmsList({ initialFarms }: FarmsListProps) {
             location: { lat: 0, lng: 0 },
             crop_type: '',
             irrigation_type: '',
-            irrigation_details: '',
             size_acres: 0,
           }}
         />

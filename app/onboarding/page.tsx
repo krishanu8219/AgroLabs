@@ -114,7 +114,15 @@ export default function OnboardingPage() {
     }
   };
 
+  const handleRemoveFarm = (index: number) => {
+    setFarms(farms.filter((_, i) => i !== index));
+  };
+
   const handleComplete = () => {
+    if (farms.length === 0) {
+      setError('Please add at least one farm to continue.');
+      return;
+    }
     router.push('/dashboard');
   };
 
@@ -217,7 +225,14 @@ export default function OnboardingPage() {
             <div className="space-y-6">
               <div className="text-center">
                 <h1 className="text-2xl font-semibold mb-2">Add Your Farms</h1>
-                <p className="text-muted-foreground">Tell us about your farming operations</p>
+                <p className="text-muted-foreground">
+                  Tell us about your farming operations (add one or more farms)
+                </p>
+                {farms.length > 0 && (
+                  <p className="text-green-600 font-medium mt-2">
+                    {farms.length} farm{farms.length > 1 ? 's' : ''} added
+                  </p>
+                )}
               </div>
 
               {/* List of added farms */}
@@ -228,12 +243,27 @@ export default function OnboardingPage() {
                     {farms.map((farm, index) => (
                       <div
                         key={farm.id || index}
-                        className="p-4 border rounded-lg bg-card"
+                        className="p-4 border rounded-lg bg-card flex justify-between items-start"
                       >
-                        <div className="font-medium">{farm.name}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {farm.crop_type} • {farm.irrigation_type}
+                        <div className="flex-1">
+                          <div className="font-medium">{farm.name}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {farm.crop_type} • {farm.irrigation_type}
+                          </div>
+                          {farm.size_acres && (
+                            <div className="text-sm text-muted-foreground">
+                              {farm.size_acres} acres
+                            </div>
+                          )}
                         </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveFarm(index)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          Remove
+                        </Button>
                       </div>
                     ))}
                   </div>
@@ -302,6 +332,21 @@ export default function OnboardingPage() {
                     </Select>
                   </div>
 
+                  <div className="space-y-2">
+                    <Label htmlFor="size_acres">Farm Size (acres) - Optional</Label>
+                    <Input
+                      id="size_acres"
+                      type="number"
+                      step="0.01"
+                      value={currentFarm.size_acres || ''}
+                      onChange={(e) => setCurrentFarm({ 
+                        ...currentFarm, 
+                        size_acres: e.target.value ? parseFloat(e.target.value) : undefined 
+                      })}
+                      placeholder="e.g., 10.5"
+                    />
+                  </div>
+
                   {error && (
                     <div className="text-red-600 text-sm">{error}</div>
                   )}
@@ -328,19 +373,31 @@ export default function OnboardingPage() {
                 <Button
                   onClick={() => setShowAddFarm(true)}
                   variant="outline"
-                  className="w-full"
+                  className="w-full border-2 border-dashed border-green-300 hover:border-green-500 hover:bg-green-50 text-green-700"
                 >
-                  + Add a Farm
+                  + {farms.length === 0 ? 'Add Your First Farm' : 'Add Another Farm'}
                 </Button>
               )}
 
-              <Button
-                onClick={handleComplete}
-                className="w-full"
-                variant="default"
-              >
-                {farms.length > 0 ? 'Continue to Dashboard' : 'Skip for Now'}
-              </Button>
+              {error && !showAddFarm && (
+                <div className="text-red-600 text-sm text-center">{error}</div>
+              )}
+
+              <div className="pt-4">
+                <Button
+                  onClick={handleComplete}
+                  className="w-full bg-green-600 hover:bg-green-700"
+                  variant="default"
+                  disabled={farms.length === 0}
+                >
+                  Continue to Dashboard ({farms.length} farm{farms.length !== 1 ? 's' : ''})
+                </Button>
+                {farms.length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center mt-2">
+                    Add at least one farm to continue
+                  </p>
+                )}
+              </div>
             </div>
           )}
         </div>

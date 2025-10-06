@@ -21,7 +21,6 @@ export interface Farm {
   size_acres?: number;
   crop_type: string;
   irrigation_type: string;
-  irrigation_details?: string;
   created_at?: string;
   updated_at?: string;
 }

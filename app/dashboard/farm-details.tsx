@@ -122,13 +122,6 @@ export function FarmDetails({ farms }: FarmDetailsProps) {
               </div>
             </div>
           </div>
-
-          {selectedFarm.irrigation_details && (
-            <div className="mt-6 pt-6 border-t">
-              <div className="text-sm text-muted-foreground mb-2">Irrigation Details</div>
-              <div className="text-sm">{selectedFarm.irrigation_details}</div>
-            </div>
-          )}
         </div>
 
         {/* Weather Map */}

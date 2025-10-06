@@ -58,7 +58,6 @@ export async function POST(req: Request) {
         size_acres: farmData.size_acres,
         crop_type: farmData.crop_type,
         irrigation_type: farmData.irrigation_type,
-        irrigation_details: farmData.irrigation_details,
       })
       .select()
       .single();
@@ -105,7 +104,6 @@ export async function PUT(req: Request) {
         size_acres: farmData.size_acres,
         crop_type: farmData.crop_type,
         irrigation_type: farmData.irrigation_type,
-        irrigation_details: farmData.irrigation_details,
         updated_at: new Date().toISOString(),
       })
       .eq('id', farmData.id)

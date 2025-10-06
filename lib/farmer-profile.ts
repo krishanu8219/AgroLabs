@@ -2,6 +2,8 @@ import { supabase } from './supabase';
 import type { FarmerProfile, Farm } from './types';
 
 export async function createFarmerProfile(profile: FarmerProfile) {
+  console.log('Attempting to create farmer profile:', profile);
+  
   const { data, error } = await supabase
     .from('farmer_profiles')
     .insert(profile)
@@ -10,9 +12,16 @@ export async function createFarmerProfile(profile: FarmerProfile) {
 
   if (error) {
     console.error('Error creating farmer profile:', error);
+    console.error('Error details:', {
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      code: error.code
+    });
     throw error;
   }
 
+  console.log('Farmer profile created successfully:', data);
   return data;
 }
 
