@@ -17,8 +17,16 @@ export async function GET(request: Request) {
     }
 
     // Meteomatics API credentials
-    const username = 'gupta_achintya';
-    const password = 's21pmVNR8FgU41C8sV0V';
+    const username = process.env.METEOMATICS_USERNAME || 'gupta_achintya';
+    const password = process.env.METEOMATICS_PASSWORD || 's21pmVNR8FgU41C8sV0V';
+    
+    if (!username || !password) {
+      return NextResponse.json(
+        { error: 'Meteomatics credentials not configured' },
+        { status: 500 }
+      );
+    }
+    
     const authHeader = Buffer.from(`${username}:${password}`).toString('base64');
 
     // Round to current hour UTC
